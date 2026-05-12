@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Copilot Configuration Workshop</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <style>
+    :root {
+      --gh-blue: #58a6ff;
+      --gh-blue-dark: #388bfd;
+      --gh-blue-muted: #1c3a5e;
+      --gh-green: #3fb950;
+      --gh-purple: #bc8cff;
+      --gh-orange: #ffa657;
+      --gh-gray: #8b949e;
+      --gh-gray-light: #161b22;
+      --gh-border: #30363d;
+      --gh-text: #e6edf3;
+      --gh-navy: #0d1117;
+      --r-background-color: #0d1117;
+      --r-main-color: #c9d1d9;
+      --r-heading-color: #e6edf3;
+      --r-link-color: #58a6ff;
+      --r-link-color-hover: #79c0ff;
+      --r-selection-background-color: #388bfd;
+      --r-main-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --r-heading-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --r-code-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    .reveal {
+      font-size: 1.55rem;
+    }
+
+    body,
+    .reveal,
+    .reveal .backgrounds {
+      background-color: #0d1117 !important;
+    }
+
+    .reveal .slides section {
+      overflow-y: auto;
+      padding-bottom: 4px !important;
+    }
+
+    .reveal h1 {
+      font-size: 2.1rem;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+
+    .reveal h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #58a6ff;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 0.3em;
+      margin-bottom: 0.6em;
+      letter-spacing: -0.01em;
+    }
+
+    .reveal h3 {
+      font-size: 1.1rem;
+      color: #8b949e;
+    }
+
+    .reveal .slide-number {
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      color: #8b949e;
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    /* ---- Title slide ---- */
+    .title-slide {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 60%, #1a1f2e 100%) !important;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .title-slide h1 {
+      font-size: 2.8rem !important;
+      font-weight: 800 !important;
+      background: linear-gradient(135deg, #ffffff 30%, #79c0ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15 !important;
+    }
+
+    .title-slide h2 {
+      color: #58a6ff;
+      border-bottom-color: rgba(255,255,255,0.08);
+    }
+
+    /* ---- Exercise intro ---- */
+    .exercise-intro {
+      background: linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%) !important;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .exercise-intro h2 {
+      color: #79c0ff;
+      border-bottom: none;
+      font-size: 1.8rem !important;
+      font-weight: 700;
+      margin-bottom: 0.4em;
+    }
+
+    .exercise-intro p {
+      color: #c9d1d9;
+      font-size: 1rem;
+    }
+
+    /* ---- CTA box for "Start Lab" ---- */
+    .cta-box {
+      display: inline-block;
+      background: linear-gradient(90deg, rgba(56,139,253,0.18), rgba(56,139,253,0.06));
+      border: 1px solid #388bfd;
+      border-radius: 8px;
+      padding: 0.55em 1.4em;
+      margin-top: 1em;
+      font-size: 0.88rem;
+      color: #79c0ff;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .cta-hint {
+      font-size: 0.72rem;
+      color: #484f58;
+      margin-top: 0.5em;
+    }
+
+    /* ---- Labels ---- */
+    .label {
+      display: inline-block;
+      background: var(--gh-blue);
+      color: #0d1117;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5em;
+      font-weight: 700;
+    }
+
+    .label.green  { background: var(--gh-green); }
+    .label.purple { background: var(--gh-purple); }
+    .label.orange { background: var(--gh-orange); }
+    .label.gray   { background: #30363d; color: #8b949e; }
+    .label.white  { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #c9d1d9; }
+
+    /* ---- Tables ---- */
+    .reveal table {
+      font-size: 0.85rem;
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+      outline: 1px solid #30363d;
+    }
+
+    .reveal table th {
+      background: #161b22;
+      color: #e6edf3;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .reveal table td,
+    .reveal table th {
+      border: 1px solid #30363d;
+      padding: 5px 11px;
+      vertical-align: top;
+    }
+
+    .reveal table tbody tr:hover {
+      background: #1c2128;
+    }
+
+    /* ---- Code ---- */
+    .reveal pre {
+      box-shadow: none;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      margin: 0.5em 0;
+    }
+
+    .reveal code:not(pre code) {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: #79c0ff;
+      font-size: 0.88em;
+    }
+
+    /* ---- Notes / callouts ---- */
+    .note {
+      background: transparent;
+      border-left: 2px solid #30363d;
+      padding: 4px 10px;
+      margin: 0.5em 0;
+      font-size: 0.75rem;
+      text-align: left;
+      color: #8b949e;
+    }
+
+    .note strong {
+      color: #8b949e;
+    }
+
+    .note.green {
+      border-left-color: #3fb950;
+    }
+
+    .note.orange {
+      border-left-color: #ffa657;
+    }
+
+    /* ---- Two-column layout ---- */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2em;
+      text-align: left;
+    }
+
+    /* ---- Cards ---- */
+    .card {
+      border: 1px solid #30363d;
+      border-left: 3px solid #388bfd;
+      border-radius: 8px;
+      padding: 1em 1.1em;
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 0.4em;
+      font-size: 0.95rem;
+      color: #58a6ff;
+    }
+
+    .card p,
+    .card ul {
+      font-size: 0.82rem;
+      margin: 0;
+      color: #c9d1d9;
+    }
+
+    .card ul {
+      padding-left: 1.2em;
+    }
+
+    /* ---- Large exercise number ---- */
+    .exercise-number {
+      font-size: 6rem;
+      font-weight: 800;
+      color: rgba(88,166,255,0.12);
+      display: block;
+      margin-bottom: 0em;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    /* ---- Numbered steps ---- */
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75em;
+      margin-bottom: 0.7em;
+      text-align: left;
+    }
+
+    .step-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.9em;
+      height: 1.9em;
+      background: #1c3a5e;
+      color: #58a6ff;
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid #388bfd;
+    }
+
+    .step-content {
+      font-size: 0.88rem;
+      padding-top: 0.25em;
+      line-height: 1.5;
+      color: #c9d1d9;
+    }
+
+    .reveal ul {
+      text-align: left;
+    }
+
+    /* ---- TOC grid ---- */
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.9em;
+      font-size: 0.82rem;
+    }
+
+    .toc-item {
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 0.8em;
+      background: #161b22;
+      text-align: center;
+      color: #c9d1d9;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .toc-item:hover {
+      border-color: #388bfd;
+      box-shadow: 0 0 0 3px rgba(56,139,253,0.1);
+    }
+
+    .toc-num {
+      display: block;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #58a6ff;
+      margin-bottom: 0.15em;
+    }
+
+    /* ---- GitHub mark SVG ---- */
+    .gh-mark {
+      fill: #ffffff;
+      width: 52px;
+      height: 52px;
+      margin-bottom: 0.5em;
+    }
+
+    /* ---- Copilot spark icon ---- */
+    .copilot-icon {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      vertical-align: middle;
+      margin-right: 0.3em;
+    }
+
+    /* ---- Stats grid ---- */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.9em;
+      margin: 0.6em 0;
+    }
+
+    .stat-card {
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 1em 0.7em;
+      background: #161b22;
+      text-align: center;
+    }
+
+    .stat-num {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #58a6ff;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.73rem;
+      color: #8b949e;
+      margin-top: 0.3em;
+      line-height: 1.35;
+    }
+
+    /* ---- Section divider ---- */
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, #388bfd, #58a6ff);
+      border-radius: 2px;
+      margin: 0.6em auto;
+    }
+
+    /* ---- Tier badge ---- */
+    .tier {
+      display: inline-block;
+      background: linear-gradient(90deg, #bc8cff, #58a6ff);
+      color: #0d1117;
+      border-radius: 20px;
+      padding: 3px 14px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* ---- SDLC phase badge ---- */
+    .sdlc-phase {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 1px 9px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .sdlc-phase.plan     { background: #2d1a5e; color: #bc8cff; border: 1px solid #6e3eb5; }
+    .sdlc-phase.implement { background: #1c3a5e; color: #58a6ff; border: 1px solid #388bfd; }
+    .sdlc-phase.test     { background: #1a3d2b; color: #3fb950; border: 1px solid #2ea043; }
+    .sdlc-phase.review   { background: #3d2200; color: #ffa657; border: 1px solid #d97828; }
+    .sdlc-phase.document { background: #1c2128; color: #8b949e; border: 1px solid #30363d; }
+    .sdlc-phase.maintain { background: #3d2200; color: #ffa657; border: 1px solid #d97828; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============================================================
+     SLIDE 1: Title
+     ============================================================ -->
+<section class="title-slide" data-background="linear-gradient(135deg, #0d1117 0%, #161b22 60%, #1a1f2e 100%)">
+  <svg class="gh-mark" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" style="display:block; margin:0 auto 0.6em; width:64px; height:64px;">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/>
+  </svg>
+  <h1>GitHub Copilot<br>Configuration Workshop</h1>
+  <div class="divider"></div>
+  <p style="color:#8b949e; margin-top:0.7em; font-size:1rem">
+    Plan &bull; Design &bull; Implement &bull; Test &bull; Orchestrate &bull; Build SDLC agents with Copilot
+  </p>
+  <p style="font-size:0.72rem; color:#484f58; margin-top:2em">
+    Open-source &bull; No additional tools required
+  </p>
+</section>
+
+<!-- ============================================================
+     SLIDE 2: What is GitHub Copilot
+     ============================================================ -->
+<section>
+  <h2>What Is GitHub Copilot?</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>AI pair programmer</h3>
+      <p>GitHub Copilot uses large language models trained on public code to suggest completions and answer questions directly inside your editor.</p>
+    </div>
+    <div class="card">
+      <h3>Powered by Microsoft &amp; OpenAI</h3>
+      <p>Copilot is powered by OpenAI Codex and GPT-4 class models, delivered via Microsoft Azure infrastructure, and integrated natively into GitHub.</p>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:0.9em">
+    <div class="card">
+      <h3>Code completions</h3>
+      <p>Ghost-text suggestions that appear as you type, completing lines, functions, and entire files.</p>
+    </div>
+    <div class="card">
+      <h3>Copilot Chat</h3>
+      <p>A conversational interface for code explanation, refactoring, test generation, and more.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.9em">
+    <strong>Key insight:</strong> The quality of Copilot's output depends heavily on the context you provide. This workshop teaches you how to provide better context.
+  </div>
+</section>
+
+<!-- ============================================================
+     Copilot by the Numbers
+     ============================================================ -->
+<section>
+  <h2>Copilot by the Numbers</h2>
+  <div class="stat-grid">
+    <div class="stat-card">
+      <span class="stat-num">55%</span>
+      <span class="stat-label">faster at completing coding tasks in controlled studies</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">88%</span>
+      <span class="stat-label">of developers report feeling more focused</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">74%</span>
+      <span class="stat-label">say Copilot lets them focus on more satisfying work</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">46%</span>
+      <span class="stat-label">of new code written by Copilot in supported languages</span>
+    </div>
+  </div>
+  <div class="stat-grid" style="margin-top:0">
+    <div class="stat-card">
+      <span class="stat-num">73%</span>
+      <span class="stat-label">stay in the flow longer with Copilot active</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">75%</span>
+      <span class="stat-label">feel more fulfilled with their job when using Copilot</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">~15%</span>
+      <span class="stat-label">higher pull request merge rate in enterprise teams</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">30%</span>
+      <span class="stat-label">average suggestion acceptance rate by developers</span>
+    </div>
+  </div>
+  <p style="font-size:0.68rem; color:#484f58; margin-top:0.6em; text-align:right">
+    Sources: <a href="https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/" style="color:#484f58">GitHub Research Blog</a> &bull; <a href="https://cacm.acm.org/research/measuring-github-copilots-impact-on-productivity/" style="color:#484f58">ACM Research 2024</a>
+  </p>
+</section>
+
+<!-- ============================================================
+     Copilot Across the SDLC
+     ============================================================ -->
+<section>
+  <h2>GitHub Copilot Across the SDLC</h2>
+  <table>
+    <thead>
+      <tr><th style="width:22%">SDLC Phase</th><th style="width:30%">Copilot Feature</th><th>How Copilot Helps</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="sdlc-phase plan">Plan &amp; Design</span></td>
+        <td>Copilot Chat (<code>@workspace</code>)</td>
+        <td>Explore architecture options, generate project scaffolding, and draft technical specs</td>
+      </tr>
+      <tr>
+        <td><span class="sdlc-phase implement">Implement</span></td>
+        <td>Inline completions + Chat</td>
+        <td>Autocomplete functions, generate boilerplate, and suggest idiomatic patterns for your stack</td>
+      </tr>
+      <tr>
+        <td><span class="sdlc-phase test">Test</span></td>
+        <td><code>/tests</code>, <code>#file</code></td>
+        <td>Generate unit and integration test suites from existing function signatures</td>
+      </tr>
+      <tr>
+        <td><span class="sdlc-phase review">Review</span></td>
+        <td><code>/explain</code>, <code>/fix</code></td>
+        <td>Explain unfamiliar code during reviews and surface potential bugs before merge</td>
+      </tr>
+      <tr>
+        <td><span class="sdlc-phase document">Document</span></td>
+        <td><code>/doc</code></td>
+        <td>Generate JSDoc comments, Python docstrings, and README sections from code</td>
+      </tr>
+      <tr>
+        <td><span class="sdlc-phase maintain">Maintain</span></td>
+        <td><code>@workspace</code>, Chat</td>
+        <td>Diagnose regressions, refactor legacy code, and update configuration or dependencies</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================
+     SLIDE 3: Who is this for
+     ============================================================ -->
+<section>
+  <h2>Who Is This Workshop For?</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Prerequisites</h3>
+      <ul>
+        <li>An active GitHub Copilot subscription</li>
+        <li>GitHub Codespaces (recommended) or VS Code with the Copilot extension</li>
+        <li>Basic Git and GitHub familiarity</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>You will learn to</h3>
+      <ul>
+        <li>Write prompts that produce consistent results</li>
+        <li>Configure Copilot at the repository level</li>
+        <li>Apply file-type-specific rules automatically</li>
+        <li>Use Chat participants, commands, and variables</li>
+        <li>Onboard AI coding agents efficiently</li>
+        <li>Scale configuration across an entire organization</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.9em">
+    All content is sourced from official GitHub documentation.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 4: Table of Contents
+     ============================================================ -->
+<section>
+  <h2>Workshop Exercises</h2>
+  <div class="toc-grid">
+    <div class="toc-item">
+      <span class="toc-num">01</span>
+      Prompt Engineering &rarr; Planner Agent
+    </div>
+    <div class="toc-item">
+      <span class="toc-num">02</span>
+      Custom Instructions &rarr; Architect Agent
+    </div>
+    <div class="toc-item">
+      <span class="toc-num">03</span>
+      Path-Specific Instructions &rarr; Developer Agent
+    </div>
+    <div class="toc-item">
+      <span class="toc-num">04</span>
+      Prompt Files &rarr; Tester Agent
+    </div>
+    <div class="toc-item">
+      <span class="toc-num">05</span>
+      Copilot Code Review &rarr; Code Review
+    </div>
+    <div class="toc-item">
+      <span class="toc-num">06</span>
+      Dependency Security &rarr; Security
+    </div>
+    <div class="toc-item">
+      <span class="toc-num">07</span>
+      Agent Orchestration &rarr; Full Lifecycle
+    </div>
+  </div>
+  <p style="font-size:0.83rem; color:var(--gh-gray); margin-top:1.2em">
+    Each exercise: 20&ndash;40 minutes &bull; Total: approximately 3&ndash;4 hours
+  </p>
+</section>
+
+<!-- ============================================================
+     SLIDE 5: How to start
+     ============================================================ -->
+<section>
+  <h2>Getting Started</h2>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      Go to
+      <a href="https://github.com/samueltauil/copilot-config-workshop">github.com/samueltauil/copilot-config-workshop</a>
+      and click <strong>Use this template</strong> &rarr; <strong>Create a new repository</strong>.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      Name your repository and click <strong>Create repository</strong>. GitHub Actions runs automatically in the background.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      Open the <strong>Issues</strong> tab of your new repository. A new issue appears with the instructions for Step 1. This is your exercise guide.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <strong>Option A (recommended):</strong> Click <strong>Code &gt; Codespaces &gt; Create codespace on main</strong>. No local setup required.<br>
+      <strong>Option B:</strong> Clone locally and open in VS Code:<br>
+      <code>git clone https://github.com/&lt;your-username&gt;/copilot-config-workshop.git</code>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      Follow the instructions in the Issue. After each step, push your changes. GitHub Actions detects completion and posts the next step automatically.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     How to Use These Slides
+     ============================================================ -->
+<section>
+  <h2>How to Use These Slides</h2>
+  <div class="two-col">
+    <div class="card" style="border-left-color: #3fb950;">
+      <h3 style="color:#3fb950">&#9312; Do the lab first</h3>
+      <p>Each exercise section starts with a <strong>dark intro slide</strong>. When you see it, stop here and open your GitHub Issue — that's where the step-by-step lab instructions live.</p>
+      <p style="margin-top:0.6em">Push your changes. GitHub Actions automatically posts the next step.</p>
+    </div>
+    <div class="card" style="border-left-color: #58a6ff;">
+      <h3 style="color:#58a6ff">&#9313; Use slides as reference</h3>
+      <p>The slides that follow each intro cover the <strong>theory and concepts</strong> behind each feature. Return to them while doing the lab, or use them as a reference after.</p>
+      <p style="margin-top:0.6em">Slides do not replace the Issue — they add context and depth.</p>
+    </div>
+  </div>
+  <div style="margin-top:1.1em; display:flex; align-items:center; justify-content:center; gap:1.5em; font-size:0.82rem; color:#8b949e">
+    <span>Dark intro slide &rarr; <strong style="color:#3fb950">go to Issue</strong></span>
+    <span style="color:#30363d">|</span>
+    <span>Light content slides &rarr; <strong style="color:#58a6ff">read &amp; reference</strong></span>
+    <span style="color:#30363d">|</span>
+    <span>Push changes &rarr; <strong style="color:#bc8cff">auto-advance</strong></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 6: Exercise 1 intro
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">01</span>
+  <h2>Prompt Engineering &rarr; Planner Agent</h2>
+  <p>Learn prompt strategies and Copilot modes while building a Planner Agent for the Planning phase.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Planning &bull; Duration: ~30 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 7: Exercise 1 - What is a prompt
+     ============================================================ -->
+<section>
+  <h2>What Is a Prompt?</h2>
+  <p style="font-size:0.95rem">A prompt is any request you make to GitHub Copilot. There are two primary forms.</p>
+  <div class="two-col" style="margin-top:0.5em">
+    <div class="card">
+      <h3>Inline completions</h3>
+      <p>Ghost text that appears as you type in the editor. Copilot infers the prompt from the surrounding code, comments, and open files.</p>
+    </div>
+    <div class="card">
+      <h3>Copilot Chat</h3>
+      <p>Natural language questions typed in the Chat panel, the inline editor (<kbd>Ctrl+I</kbd>), or on GitHub.com.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.9em">
+    The strategies in this exercise apply primarily to <strong>Copilot Chat</strong>. For inline completions, the best context comes from well-named variables, comments, and open relevant files.
+  </div>
+  <p style="font-size:0.8rem; color:var(--gh-gray); margin-top:0.5em">
+    Source: <a href="https://docs.github.com/en/copilot/using-github-copilot/copilot-chat/prompt-engineering-for-copilot-chat">Prompt engineering for GitHub Copilot Chat</a>
+  </p>
+</section>
+
+<!-- ============================================================
+     SLIDE 7b: Copilot Interaction Modes
+     ============================================================ -->
+<section>
+  <h2>Copilot Interaction Modes</h2>
+  <p style="font-size:0.9rem">GitHub Copilot supports five interaction modes, each suited for different tasks.</p>
+  <table>
+    <thead>
+      <tr><th style="width:25%">Mode</th><th style="width:30%">Where</th><th>Best for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Inline suggestions</td><td>Editor (ghost text)</td><td>Auto-completing code as you type</td></tr>
+      <tr><td>Ask</td><td>Chat panel</td><td>Research and questions without code changes</td></tr>
+      <tr><td>Agent</td><td>Chat panel</td><td>Multi-step tasks with file edits and terminal commands</td></tr>
+      <tr><td>Plan</td><td>Chat panel</td><td>Complex task planning before implementation</td></tr>
+      <tr><td>Inline chat</td><td>Editor (<kbd>Ctrl+I</kbd>)</td><td>Quick, scoped edits in the current file</td></tr>
+    </tbody>
+  </table>
+  <div class="note" style="margin-top:0.7em">
+    <strong>Plan mode vs. custom Planner Agent:</strong> Plan mode is a built-in Copilot mode for breaking down tasks. A custom Planner Agent goes further: it carries your project context, enforces specific templates, and embeds domain knowledge. You build both in Exercise 1.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 8: Exercise 1 - Six strategies
+     ============================================================ -->
+<section>
+  <h2>Six Prompt Engineering Strategies</h2>
+  <table>
+    <thead>
+      <tr><th style="width:3%">#</th><th style="width:35%">Strategy</th><th>Key idea</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Start general, then get specific</td><td>State the goal first; add constraints and requirements after</td></tr>
+      <tr><td>2</td><td>Give examples</td><td>Show expected inputs and outputs directly in the prompt</td></tr>
+      <tr><td>3</td><td>Break tasks into steps</td><td>Compose complex features from smaller, focused prompts</td></tr>
+      <tr><td>4</td><td>Avoid ambiguity</td><td>Name functions, files, and types explicitly</td></tr>
+      <tr><td>5</td><td>Indicate relevant code</td><td>Open only relevant files; attach context with <code>#file</code></td></tr>
+      <tr><td>6</td><td>Experiment and iterate</td><td>Follow up in the same conversation to refine results</td></tr>
+    </tbody>
+  </table>
+  <div class="note" style="margin-top:0.7em">
+    These strategies apply across every SDLC phase: writing implementation code, generating tests, requesting documentation, or explaining code during review.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 9: Exercise 1 - Vague vs Specific example
+     ============================================================ -->
+<section>
+  <h2>Strategy 1 in Practice: Specificity</h2>
+  <div class="two-col">
+    <div>
+      <span class="label gray">Vague prompt</span>
+      <pre><code class="language-text">Write a function to
+validate input</code></pre>
+      <p style="font-size:0.8rem; color:var(--gh-gray)">Copilot makes assumptions about type, language, and rules. The result may not match your needs.</p>
+    </div>
+    <div>
+      <span class="label green">Specific prompt</span>
+      <pre><code class="language-text">Write a JavaScript function
+that validates an email address.
+
+The function should:
+- Accept a single string `email`
+- Return true if format is valid
+- Return false otherwise
+- Use no external libraries
+- Include a JSDoc comment</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 10: Exercise 1 - Giving examples
+     ============================================================ -->
+<section>
+  <h2>Strategy 2 in Practice: Give Examples</h2>
+  <pre><code class="language-text">I have a list of user objects with this shape:
+  { id: number, name: string, role: "admin" | "viewer" }
+
+Write a function `filterAdmins(users)` that:
+- Accepts an array of these objects
+- Returns only users where role === "admin"
+
+Example input:
+  [{ id: 1, name: "Alice", role: "admin" },
+   { id: 2, name: "Bob",   role: "viewer" }]
+
+Expected output:
+  [{ id: 1, name: "Alice", role: "admin" }]</code></pre>
+  <div class="note">
+    Providing a concrete example removes guesswork and produces output that matches your data model immediately.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 11: Exercise 2 intro
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">02</span>
+  <h2>Custom Instructions &rarr; Architect Agent</h2>
+  <p>Create repository-wide conventions and build an Architect Agent for the Design phase.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Design &bull; Duration: ~25 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 12: Exercise 2 - What is copilot-instructions.md
+     ============================================================ -->
+<section>
+  <h2>What Is <code>copilot-instructions.md</code>?</h2>
+  <ul>
+    <li>A plain Markdown file located at <code>.github/copilot-instructions.md</code></li>
+    <li>Automatically included in every Copilot Chat request in the repository</li>
+    <li>Eliminates repetitive context you would otherwise add to every prompt</li>
+    <li>Supported in VS Code, Visual Studio, JetBrains IDEs, and GitHub.com</li>
+    <li>Also used by Copilot code review features</li>
+  </ul>
+  <div class="note" style="margin-top:0.9em">
+    <strong>Scope:</strong> These instructions apply to <strong>Copilot Chat only</strong>. They do not apply to inline completion suggestions (ghost text).
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 13: Exercise 2 - What to include
+     ============================================================ -->
+<section>
+  <h2>What to Include</h2>
+  <div class="two-col">
+    <div>
+      <p style="font-weight:600; color:var(--gh-green); font-size:0.9rem">&#10003; Good to include</p>
+      <ul style="font-size:0.83rem">
+        <li>Language and runtime versions</li>
+        <li>Code style rules (indentation, quotes, semicolons)</li>
+        <li>Framework and library choices</li>
+        <li>Error handling patterns</li>
+        <li>Test runner and conventions</li>
+        <li>File and directory naming conventions</li>
+        <li>Output format preferences (e.g., always include JSDoc)</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:600; color:var(--gh-orange); font-size:0.9rem">&#10007; Avoid</p>
+      <ul style="font-size:0.83rem">
+        <li>References to specific code paths (use path-specific files instead)</li>
+        <li>Conflicting or contradictory instructions</li>
+        <li>Very long files (included in every request, affecting context limits)</li>
+        <li>Secrets, tokens, or credentials</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 14: Exercise 2 - Example file
+     ============================================================ -->
+<section>
+  <h2>Example <code>copilot-instructions.md</code></h2>
+  <pre><code class="language-markdown"># Copilot Instructions
+
+## Stack
+- Language: TypeScript 5.x, Node.js 22
+- Framework: Express 5
+- Database: PostgreSQL via `pg` (no ORM)
+- Test runner: Vitest
+
+## Code Style
+- Use 2-space indentation and single quotes.
+- Always add JSDoc comments to exported functions.
+- Prefer `async`/`await` over `.then()` chains.
+
+## Error Handling
+- Throw typed error classes, never plain strings.
+- Log errors with the `logger` module, not `console.log`.</code></pre>
+</section>
+
+<!-- ============================================================
+     SLIDE 15: Exercise 2 - Verification
+     ============================================================ -->
+<section>
+  <h2>Verifying Your Instructions</h2>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">Ask Copilot Chat a question that should trigger your instructions (e.g., "Based on the project conventions, describe the technology stack and data model for this project").</div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      Click <strong>Used N references</strong> at the top of the Copilot response.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      Confirm that <code>.github/copilot-instructions.md</code> appears in the reference list.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      Verify that the response respects your instructions (correct language, style, patterns).
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.7em">
+    If the file does not appear, confirm the path is exactly <code>.github/copilot-instructions.md</code>. The path is case-sensitive.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 16: Exercise 3 intro
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">03</span>
+  <h2>Path-Specific Instructions &rarr; Developer Agent</h2>
+  <p>Create per-directory coding rules and build a Developer Agent for the Implementation phase.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Implementation &bull; Duration: ~30 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 17: Exercise 3 - How it works
+     ============================================================ -->
+<section>
+  <h2>How Path-Specific Instructions Work</h2>
+  <ul style="font-size:0.9rem">
+    <li>Files live in <code>.github/instructions/</code></li>
+    <li>File names must end with <code>.instructions.md</code></li>
+    <li>A YAML front matter block specifies the glob pattern via <code>applyTo</code></li>
+    <li>When a matching file is open in the editor, <em>both</em> the repository-wide and path-specific instruction sets are active simultaneously</li>
+  </ul>
+  <pre><code class="language-markdown">---
+applyTo: "**/*.py"
+---
+
+# Python File Instructions
+
+- Follow PEP 8 style conventions.
+- Use 4-space indentation and type annotations on all arguments.
+- Prefer `pathlib.Path` over the `os` module for file operations.
+- Use `pytest` for all tests.</code></pre>
+</section>
+
+<!-- ============================================================
+     SLIDE 18: Exercise 3 - File structure
+     ============================================================ -->
+<section>
+  <h2>File Locations and Patterns</h2>
+  <pre><code class="language-text">.github/
+  copilot-instructions.md            &larr; repository-wide (all Chat requests)
+  instructions/
+    python.instructions.md           &larr; applyTo: "**/*.py"
+    tests.instructions.md            &larr; applyTo: "**/*.test.{js,ts}"
+    migrations.instructions.md       &larr; applyTo: "db/migrations/**"
+    react-components.instructions.md &larr; applyTo: "src/components/**/*.tsx"</code></pre>
+  <div class="note" style="margin-top:0.9em">
+    Multiple path-specific files can be active at the same time if multiple patterns match the currently open file.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 19: Exercise 4 intro
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">04</span>
+  <h2>Prompt Files &rarr; Tester Agent</h2>
+  <p>Create reusable prompt files and build a Tester Agent for the Testing phase.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Testing &bull; Duration: ~30 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 20: Exercise 4 - The three keywords
+     ============================================================ -->
+<section>
+  <h2>Three Types of Keywords</h2>
+  <table>
+    <thead>
+      <tr><th style="width:12%">Syntax</th><th style="width:25%">Name</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@</code></td>
+        <td>Chat participant</td>
+        <td>Scopes the prompt to a domain expert (workspace, GitHub, VS Code)</td>
+      </tr>
+      <tr>
+        <td><code>/</code></td>
+        <td>Slash command</td>
+        <td>Triggers a specific, predefined action (explain, fix, test)</td>
+      </tr>
+      <tr>
+        <td><code>#</code></td>
+        <td>Chat variable</td>
+        <td>Attaches specific context to the prompt (file, selection, codebase)</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="note" style="margin-top:0.9em">
+    These keywords reduce the amount of natural language explanation needed and give Copilot a clearer, more structured input.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 21: Exercise 4 - Chat participants
+     ============================================================ -->
+<section>
+  <h2>Chat Participants (<code>@</code>)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>@workspace</h3>
+      <p>Searches and understands all files in your current VS Code workspace.</p>
+      <pre style="font-size:0.68rem; margin-top:0.5em"><code class="language-text">@workspace Where is the
+user authentication logic?</code></pre>
+      <pre style="font-size:0.68rem; margin-top:0.4em"><code class="language-text">@workspace How is error
+handling implemented?</code></pre>
+    </div>
+    <div class="card">
+      <h3>@github</h3>
+      <p>Accesses GitHub-specific features: issues, PRs, code search, and Bing web search.</p>
+      <pre style="font-size:0.68rem; margin-top:0.5em"><code class="language-text">@github What open issues
+mention authentication?</code></pre>
+      <pre style="font-size:0.68rem; margin-top:0.4em"><code class="language-text">@github What skills are
+available in Copilot?</code></pre>
+    </div>
+  </div>
+  <p style="font-size:0.8rem; color:var(--gh-gray); margin-top:0.8em">
+    Type <code>@</code> in the Chat prompt box to see all available participants for your editor.
+  </p>
+</section>
+
+<!-- ============================================================
+     SLIDE 22: Exercise 4 - Slash commands
+     ============================================================ -->
+<section>
+  <h2>Slash Commands (<code>/</code>)</h2>
+  <table>
+    <thead>
+      <tr><th style="width:20%">Command</th><th>Action</th><th style="width:22%">SDLC Phase</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/explain</code></td><td>Explains the selected code or file in plain language</td><td><span class="sdlc-phase review">Review</span> <span class="sdlc-phase maintain">Maintain</span></td></tr>
+      <tr><td><code>/fix</code></td><td>Analyzes and suggests a fix for a bug in the selected code</td><td><span class="sdlc-phase implement">Implement</span> <span class="sdlc-phase test">Test</span></td></tr>
+      <tr><td><code>/tests</code></td><td>Generates unit tests for the selected code</td><td><span class="sdlc-phase test">Test</span></td></tr>
+      <tr><td><code>/doc</code></td><td>Adds documentation comments (JSDoc, docstrings) to the selection</td><td><span class="sdlc-phase document">Document</span></td></tr>
+      <tr><td><code>/new</code></td><td>Scaffolds a new file, project, or component structure</td><td><span class="sdlc-phase plan">Plan &amp; Design</span></td></tr>
+      <tr><td><code>/clear</code></td><td>Starts a new chat session, clearing previous context</td><td><em style="color:var(--gh-gray);font-size:0.85em">any phase</em></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--gh-gray); margin-top:0.8em">
+    Type <code>/</code> in the Chat prompt box to see all available commands.
+  </p>
+</section>
+
+<!-- ============================================================
+     SLIDE 23: Exercise 4 - Chat variables
+     ============================================================ -->
+<section>
+  <h2>Chat Variables (<code>#</code>)</h2>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Variable</th><th>What it attaches to the prompt</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>#file</code></td><td>A specific file from the workspace (e.g., <code>#file:auth.ts</code>)</td></tr>
+      <tr><td><code>#selection</code></td><td>The currently selected code in the active editor</td></tr>
+      <tr><td><code>#codebase</code></td><td>Semantic search across all files in the workspace</td></tr>
+      <tr><td><code>#editor</code></td><td>The contents of the currently active editor tab</td></tr>
+    </tbody>
+  </table>
+  <pre style="margin-top:0.9em"><code class="language-text">#file:src/models/task.js /tests Write unit tests for
+the Task model using the built-in Node.js test runner.</code></pre>
+  <div class="note" style="margin-top:0.7em">
+    Combining variables and slash commands in one prompt gives Copilot maximum context with minimum typing.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 23b: Exercise 4 - Test generation workflow
+     ============================================================ -->
+<section>
+  <h2>Test Generation &amp; Execution Workflow</h2>
+  <p style="font-size:0.88rem">Copilot can generate tests, save them, and help you iterate on failures.</p>
+  <div style="display:flex; justify-content:center; gap:0.6em; margin:1em 0 0.8em; flex-wrap:wrap">
+    <div class="card" style="flex:1; min-width:140px; max-width:200px; text-align:center; padding:0.6em">
+      <div style="font-size:1.4em">1</div>
+      <p style="font-size:0.78rem; margin:0.3em 0 0"><strong>Generate</strong><br>Use <code>/tests</code> or a prompt to generate a test file</p>
+    </div>
+    <div class="card" style="flex:1; min-width:140px; max-width:200px; text-align:center; padding:0.6em">
+      <div style="font-size:1.4em">2</div>
+      <p style="font-size:0.78rem; margin:0.3em 0 0"><strong>Save</strong><br>Save tests alongside the source with a <code>.test</code> suffix</p>
+    </div>
+    <div class="card" style="flex:1; min-width:140px; max-width:200px; text-align:center; padding:0.6em">
+      <div style="font-size:1.4em">3</div>
+      <p style="font-size:0.78rem; margin:0.3em 0 0"><strong>Run</strong><br>Execute tests in the terminal and review results</p>
+    </div>
+    <div class="card" style="flex:1; min-width:140px; max-width:200px; text-align:center; padding:0.6em">
+      <div style="font-size:1.4em">4</div>
+      <p style="font-size:0.78rem; margin:0.3em 0 0"><strong>Iterate</strong><br>Paste failures into Copilot, fix, and re-run</p>
+    </div>
+  </div>
+  <pre style="margin-top:0.5em"><code class="language-text"># Step 1: Generate tests
+#file:src/models/task.js /tests
+
+# Step 3: Run tests
+node --test tests/task.test.js
+
+# Step 4: Fix failures
+These tests failed: [paste error]. Explain and fix.</code></pre>
+  <div class="note" style="margin-top:0.7em">
+    You practice this workflow in Exercises 1, 4, and 5.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 24: Exercise 4 - Prompt files
+     ============================================================ -->
+<section>
+  <h2>Reusable Prompt Files (<code>.prompt.md</code>)</h2>
+  <p style="font-size:0.9rem">Save complex prompts as files and invoke them with <code>/</code> in Copilot Chat.</p>
+  <div class="two-col" style="margin-top:0.5em">
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">How they work</p>
+      <ul style="font-size:0.83rem">
+        <li>Files live in <code>.github/prompts/</code> with <code>.prompt.md</code> suffix</li>
+        <li>YAML front matter defines <code>description</code>, <code>agent</code>, and <code>argument-hint</code></li>
+        <li>Markdown body contains the reusable prompt instructions</li>
+        <li>Reference workspace files with Markdown links for extra context</li>
+      </ul>
+    </div>
+    <div>
+      <pre style="font-size:0.68rem"><code class="language-markdown">---
+description: Generate unit tests
+agent: agent
+argument-hint: File path to test
+---
+
+# Generate Unit Tests
+
+1. Read the target file.
+2. Identify all exported functions.
+3. Generate tests that cover:
+   - Normal inputs
+   - Edge cases
+   - Error conditions
+4. Use the project's test runner.</code></pre>
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.7em">
+    <strong>Instructions vs Prompts:</strong> Instructions define <em>how</em> tasks should be done (conventions). Prompts define <em>what</em> task to perform (reusable workflows).
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 25: Exercise 4 - Custom agents
+     ============================================================ -->
+<section>
+  <h2>Custom Agent Modes (<code>.agent.md</code>)</h2>
+  <p style="font-size:0.9rem">Create specialized Copilot personalities with specific tools, response formats, and domain expertise.</p>
+  <div class="two-col" style="margin-top:0.5em">
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">How they work</p>
+      <ul style="font-size:0.83rem">
+        <li>Files live in <code>.github/agents/</code> with <code>.agent.md</code> suffix</li>
+        <li>YAML front matter defines <code>name</code>, <code>description</code>, and <code>tools</code></li>
+        <li>Body defines the agent's personality, rules, and response format</li>
+        <li>Select from the agent dropdown in Copilot Chat</li>
+      </ul>
+    </div>
+    <div>
+      <pre style="font-size:0.68rem"><code class="language-markdown">---
+name: code-reviewer
+description: Reviews code quality
+tools: ["search"]
+---
+
+# Code Review Agent
+
+## Response Format
+**SUMMARY:** One-sentence overview.
+**ISSUES:** Numbered list (severity).
+**SUGGESTIONS:** Fixes with examples.
+**VERDICT:** APPROVE or CHANGES.</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 26: Exercise 4 - Customization file comparison
+     ============================================================ -->
+<section>
+  <h2>Copilot Customization Files at a Glance</h2>
+  <table>
+    <thead>
+      <tr><th style="width:25%">File Type</th><th style="width:25%">Location</th><th style="width:20%">Activation</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>copilot-instructions.md</code></td>
+        <td><code>.github/</code></td>
+        <td>Automatic (all Chat)</td>
+        <td>Repository-wide coding conventions</td>
+      </tr>
+      <tr>
+        <td><code>*.instructions.md</code></td>
+        <td><code>.github/instructions/</code></td>
+        <td>Automatic (matching files)</td>
+        <td>File-type-specific rules</td>
+      </tr>
+      <tr>
+        <td><code>*.prompt.md</code></td>
+        <td><code>.github/prompts/</code></td>
+        <td>Manual (<code>/</code> command)</td>
+        <td>Reusable multi-step workflows</td>
+      </tr>
+      <tr>
+        <td><code>*.agent.md</code></td>
+        <td><code>.github/agents/</code></td>
+        <td>Manual (agent dropdown)</td>
+        <td>Specialized Copilot personalities</td>
+      </tr>
+      <tr>
+        <td><code>AGENTS.md</code></td>
+        <td>Anywhere in repository</td>
+        <td>Automatic (coding agent)</td>
+        <td>Onboard autonomous agents</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================
+     SLIDE 27: Exercise 5 intro - Code Review
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">05</span>
+  <h2>Copilot Code Review &rarr; Code Review</h2>
+  <p>Add a new dependency via a Copilot-generated pull request and use Copilot code review on GitHub.com.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Code Review &bull; Duration: ~20 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 28: Exercise 5 - Copilot Code Review overview
+     ============================================================ -->
+<section>
+  <h2>Copilot Code Review</h2>
+  <ul style="font-size:0.9rem">
+    <li>AI-powered review that runs alongside human reviewers on pull requests</li>
+    <li>Understands project context from custom instructions and repository conventions</li>
+    <li>Catches bugs, style issues, and security concerns before human review</li>
+    <li>Enable in repository settings under <strong>Code review</strong></li>
+    <li>Request review from <strong>Copilot</strong> on any PR, just like requesting a human reviewer</li>
+  </ul>
+  <div class="note" style="margin-top:0.9em">
+    Copilot code review complements (not replaces) human review. Use it as a first pass before human reviewers look at the PR.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 29: Exercise 6 intro - Dependency Security
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">06</span>
+  <h2>Dependency Security &rarr; Security</h2>
+  <p>Configure Dependabot and the dependency review action to protect your supply chain.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Security &bull; Duration: ~20 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 30: Exercise 6 - Dependency Security overview
+     ============================================================ -->
+<section>
+  <h2>GitHub Dependency Security</h2>
+  <table style="font-size:0.78rem; margin-top:0.7em">
+    <thead>
+      <tr><th>Feature</th><th>What it does</th><th>When it runs</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Dependabot alerts</strong></td><td>Notifies when a dependency has a known CVE</td><td>When a new advisory is published</td></tr>
+      <tr><td><strong>Security updates</strong></td><td>Opens PRs to fix vulnerable dependencies</td><td>When an alert is created</td></tr>
+      <tr><td><strong>Version updates</strong></td><td>Opens PRs to keep dependencies current</td><td>On your configured schedule</td></tr>
+      <tr><td><strong>Dependency review</strong></td><td>Blocks PRs that introduce vulnerable deps</td><td>On every pull request</td></tr>
+    </tbody>
+  </table>
+  <div class="note" style="margin-top:0.7em">
+    The dependency graph powers all of these features. It maps your direct and transitive dependencies from <code>package.json</code> and lock files.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 31: Exercise 7 intro - Agent Orchestration
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number">07</span>
+  <h2>Agent Orchestration &rarr; Full Lifecycle</h2>
+  <p>Build an Orchestrator Agent and deliver a new feature using all SDLC agents together.</p>
+  <div class="cta-box">&#128073; Open your GitHub Issue to start this lab</div>
+  <p class="cta-hint">SDLC Phase: Full Lifecycle &bull; Duration: ~30 minutes</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 32: Exercise 7 - What is a custom agent
+     ============================================================ -->
+<section>
+  <h2>What Are Custom Agents?</h2>
+  <ul style="font-size:0.9rem">
+    <li>Specialized Copilot assistants with their own identity, tools, and behavior</li>
+    <li>Defined as <code>.agent.md</code> files with YAML frontmatter and a Markdown prompt</li>
+    <li>Stored in <code>.github/agents/</code> for workspace scope or in your user profile for global scope</li>
+    <li>Available in VS Code, JetBrains, Eclipse, Xcode, and on GitHub.com with the coding agent</li>
+    <li>Create agents for testing, debugging, planning, code review, documentation, and more</li>
+  </ul>
+  <div class="note" style="margin-top:0.9em">
+    Custom agents go beyond instructions: they create an entirely new Copilot personality with restricted (or expanded) tool access.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 33: Exercise 7 - Agent file format
+     ============================================================ -->
+<section>
+  <h2>Anatomy of a <code>.agent.md</code> File</h2>
+  <pre><code class="language-yaml">---
+name: test-specialist
+description: Focuses on test coverage and testing best practices
+tools: ["read", "edit", "search", "runTests"]
+---
+
+You are a testing specialist. Your responsibilities:
+
+- Analyze existing tests and identify coverage gaps
+- Write unit tests, integration tests, and end-to-end tests
+- Focus only on test files. Do not modify production code.</code></pre>
+  <table style="font-size:0.78rem; margin-top:0.7em">
+    <thead>
+      <tr><th>Property</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>No</td><td>Display name (defaults to filename)</td></tr>
+      <tr><td><code>description</code></td><td>Yes</td><td>Brief explanation shown in the agent dropdown</td></tr>
+      <tr><td><code>tools</code></td><td>No</td><td>List of tools to restrict access (omit for all)</td></tr>
+      <tr><td><code>model</code></td><td>No</td><td>AI model to use (VS Code and JetBrains only)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================
+     SLIDE 34: Exercise 7 - Comparison table
+     ============================================================ -->
+<section>
+  <h2>Custom Agents vs Other Copilot Files</h2>
+  <table style="font-size:0.78rem">
+    <thead>
+      <tr><th>File</th><th>Purpose</th><th>Used by</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>.agent.md</code></td><td>Define specialized agents with tools and behaviors</td><td>Copilot Chat + coding agent</td></tr>
+      <tr><td><code>copilot-instructions.md</code></td><td>Repository-wide context for all interactions</td><td>Copilot Chat (interactive)</td></tr>
+      <tr><td><code>.instructions.md</code></td><td>Path-specific rules for certain file types</td><td>Copilot Chat (matching files)</td></tr>
+      <tr><td><code>.prompt.md</code></td><td>Reusable prompt templates</td><td>Copilot Chat (manual invocation)</td></tr>
+      <tr><td><code>AGENTS.md</code></td><td>Repository onboarding for autonomous agents</td><td>AI coding agents</td></tr>
+    </tbody>
+  </table>
+  <div class="note" style="margin-top:0.7em">
+    All five file types can coexist in the same repository. Each serves a different purpose.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 35: Exercise 7 - Where to store agents
+     ============================================================ -->
+<section>
+  <h2>Where to Store Custom Agents</h2>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Location</th><th>Scope</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>.github/agents/</code> in a repository</td><td>Available in that repository (workspace)</td></tr>
+      <tr><td>VS Code user profile folder</td><td>Available across all your workspaces (personal)</td></tr>
+      <tr><td><code>.github-private</code> repository</td><td>Available across all repos in the organization</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.88rem; margin-top:1em">Custom agents also work with the <strong>Copilot coding agent</strong> on GitHub.com. When assigning an issue to Copilot, select a specific agent from the dropdown to control how the coding agent approaches the task.</p>
+  <div class="note" style="margin-top:0.7em">
+    Explore 100+ community agents at <a href="https://github.com/github/awesome-copilot" style="color:#58a6ff">github/awesome-copilot</a>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 36: Exercise 7 - Best practices
+     ============================================================ -->
+<section>
+  <h2>Tips for Effective Agents</h2>
+  <div class="two-col">
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">Do</p>
+      <ul style="font-size:0.83rem">
+        <li>Give the agent a clear role and identity</li>
+        <li>Restrict tools to what the task needs</li>
+        <li>Structure prompts with Markdown headings</li>
+        <li>Use descriptive, lowercase filenames</li>
+        <li>Test with representative prompts</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">Avoid</p>
+      <ul style="font-size:0.83rem">
+        <li>Vague identities ("Help with code")</li>
+        <li>Omitting the <code>description</code> property</li>
+        <li>Prompts over 30,000 characters</li>
+        <li>Granting all tools to focused agents</li>
+        <li>Skipping testing before sharing</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:0.9em">
+    A planning agent should not execute code. A documentation agent should not modify source files. Use tool restrictions to enforce boundaries.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 37: What's Next intro
+     ============================================================ -->
+<section class="exercise-intro" data-background="linear-gradient(160deg, #0d1117 0%, #0d1f38 50%, #0d1117 100%)">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="#388bfd" style="opacity:0.4; margin-bottom:0.3em; display:block; margin-left:auto; margin-right:auto" aria-hidden="true">
+    <path d="M12 2l2.4 7.4H22l-6.4 4.6 2.4 7.4L12 17l-6 4.4 2.4-7.4L2 9.4h7.6L12 2z"/>
+  </svg>
+  <span class="exercise-number" style="opacity:0.5">08</span>
+  <h2>What's Next</h2>
+  <p>You built seven configurations that cover the SDLC. Now explore what else custom agents can do.</p>
+  <p class="cta-hint">Ideas, org-level configuration, and next steps.</p>
+</section>
+
+<!-- ============================================================
+     SLIDE 38: Agent Ideas Beyond the SDLC
+     ============================================================ -->
+<section>
+  <h2>Agent Ideas Beyond the SDLC</h2>
+  <div class="two-col">
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">DevOps &amp; Infrastructure</p>
+      <ul style="font-size:0.8rem">
+        <li><strong>CI/CD Debugger</strong> &mdash; diagnose pipeline failures</li>
+        <li><strong>Dockerfile Optimizer</strong> &mdash; reduce image size</li>
+        <li><strong>IaC Reviewer</strong> &mdash; validate Terraform plans</li>
+      </ul>
+      <p style="font-weight:600; font-size:0.88rem; margin-top:0.6em">Documentation &amp; Knowledge</p>
+      <ul style="font-size:0.8rem">
+        <li><strong>API Doc Writer</strong> &mdash; generate OpenAPI specs</li>
+        <li><strong>Onboarding Guide</strong> &mdash; explain repo architecture</li>
+        <li><strong>ADR Author</strong> &mdash; draft decision records</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">Data &amp; Analytics</p>
+      <ul style="font-size:0.8rem">
+        <li><strong>SQL Analyst</strong> &mdash; generate and review queries</li>
+        <li><strong>Migration Planner</strong> &mdash; plan schema changes</li>
+        <li><strong>Data Validator</strong> &mdash; check data quality rules</li>
+      </ul>
+      <p style="font-weight:600; font-size:0.88rem; margin-top:0.6em">Team Workflows</p>
+      <ul style="font-size:0.8rem">
+        <li><strong>PR Reviewer</strong> &mdash; enforce team standards</li>
+        <li><strong>Release Notes Drafter</strong> &mdash; summarize changes</li>
+        <li><strong>Dependency Auditor</strong> &mdash; find outdated packages</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 39: Org-Level Configuration (condensed)
+     ============================================================ -->
+<section>
+  <h2>Org-Level Configuration</h2>
+  <p style="font-size:0.88rem">Scale your configuration across an entire GitHub organization using the <code>.github</code> repository.</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30%">File</th>
+        <th>Repo-level path</th>
+        <th>Org-level path</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>copilot-instructions.md</code></td>
+        <td><code>.github/copilot-instructions.md</code></td>
+        <td><code>.github/copilot-instructions.md</code> in org <code>.github</code> repo</td>
+      </tr>
+      <tr>
+        <td>Path-specific instructions</td>
+        <td><code>.github/instructions/*.instructions.md</code></td>
+        <td>Same path in org <code>.github</code> repo</td>
+      </tr>
+      <tr>
+        <td>Custom agents</td>
+        <td><code>.github/agents/*.agent.md</code></td>
+        <td><code>.github/agents/*.agent.md</code> in org <code>.github-private</code> repo</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="note orange" style="margin-top:0.7em">
+    <strong>Important:</strong> Repository-level configuration takes precedence and does <em>not</em> merge with org-level files. Plan org-level content as a fallback baseline, not as additions.
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 41: Summary of all files created
+     ============================================================ -->
+<section>
+  <h2>What You Built</h2>
+  <table>
+    <thead>
+      <tr><th>Artifact</th><th>Exercise</th><th>SDLC Phase</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>.github/agents/planner.agent.md</code></td>
+        <td>01</td>
+        <td>Planning</td>
+      </tr>
+      <tr>
+        <td><code>docs/project-plan.md</code></td>
+        <td>01</td>
+        <td>Planning</td>
+      </tr>
+      <tr>
+        <td><code>.github/copilot-instructions.md</code></td>
+        <td>02</td>
+        <td>Design</td>
+      </tr>
+      <tr>
+        <td><code>.github/agents/architect.agent.md</code></td>
+        <td>02</td>
+        <td>Design</td>
+      </tr>
+      <tr>
+        <td><code>docs/schema.md</code></td>
+        <td>02</td>
+        <td>Design</td>
+      </tr>
+      <tr>
+        <td><code>.github/instructions/*.instructions.md</code></td>
+        <td>03</td>
+        <td>Implementation</td>
+      </tr>
+      <tr>
+        <td><code>.github/agents/developer.agent.md</code></td>
+        <td>03</td>
+        <td>Implementation</td>
+      </tr>
+      <tr>
+        <td><code>src/**/*.js</code></td>
+        <td>03</td>
+        <td>Implementation</td>
+      </tr>
+      <tr>
+        <td><code>.github/prompts/*.prompt.md</code></td>
+        <td>04</td>
+        <td>Testing</td>
+      </tr>
+      <tr>
+        <td><code>.github/agents/tester.agent.md</code></td>
+        <td>04</td>
+        <td>Testing</td>
+      </tr>
+      <tr>
+        <td><code>package.json</code> (chalk dependency)</td>
+        <td>05</td>
+        <td>Code Review</td>
+      </tr>
+      <tr>
+        <td><code>.github/dependabot.yml</code></td>
+        <td>06</td>
+        <td>Security</td>
+      </tr>
+      <tr>
+        <td><code>.github/workflows/dependency-review.yml</code></td>
+        <td>06</td>
+        <td>Security</td>
+      </tr>
+      <tr>
+        <td><code>.github/agents/orchestrator.agent.md</code></td>
+        <td>07</td>
+        <td>Full Lifecycle</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================
+     SLIDE 42: Official documentation references
+     ============================================================ -->
+<section>
+  <h2>Official Documentation &amp; Further Learning</h2>
+  <div class="two-col">
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">Documentation</p>
+      <ul style="font-size:0.78rem">
+        <li><a href="https://docs.github.com/en/copilot/about-github-copilot/what-is-github-copilot">About GitHub Copilot</a></li>
+        <li><a href="https://docs.github.com/en/copilot/using-github-copilot/copilot-chat/prompt-engineering-for-copilot-chat">Prompt engineering for Copilot Chat</a></li>
+        <li><a href="https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot">Adding repository custom instructions</a></li>
+        <li><a href="https://code.visualstudio.com/docs/copilot/copilot-customization">Custom agents in VS Code</a></li>
+        <li><a href="https://docs.github.com/en/copilot/customizing-copilot/extending-copilot-chat-in-vs-code/creating-a-custom-agent-for-copilot-in-vs-code">Creating a custom agent for Copilot</a></li>
+        <li><a href="https://docs.github.com/en/copilot/using-github-copilot/best-practices-for-using-github-copilot">Best practices for using Copilot</a></li>
+        <li><a href="https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization">Managing Copilot in your organization</a></li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:600; font-size:0.88rem">GitHub Skills Courses</p>
+      <ul style="font-size:0.78rem">
+        <li><a href="https://github.com/skills/getting-started-with-github-copilot">Getting Started with GitHub Copilot</a></li>
+        <li><a href="https://github.com/skills/customize-your-github-copilot-experience">Customize Your GitHub Copilot Experience</a></li>
+        <li><a href="https://github.com/skills/expand-your-team-with-copilot">Expand Your Team with Copilot</a> (coding agent)</li>
+        <li><a href="https://github.com/skills/integrate-mcp-with-copilot">Integrate MCP with Copilot</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 43: End
+     ============================================================ -->
+<section class="title-slide" data-background="linear-gradient(135deg, #0d1117 0%, #161b22 60%, #1a1f2e 100%)">
+  <svg class="gh-mark" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg" aria-label="GitHub">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/>
+  </svg>
+  <h2 style="color:#58a6ff; border-bottom-color:rgba(255,255,255,0.08)">Workshop Complete</h2>
+  <div class="divider"></div>
+  <p style="color:#c9d1d9; font-size:0.95rem; margin-top:0.8em">
+    You can now configure GitHub Copilot at every level:
+  </p>
+  <p style="color:#8b949e; font-size:0.88rem">
+    Planner &bull; Architect &bull; Developer &bull; Tester &bull; Code Review &bull; Security &bull; Orchestrator &bull; A full SDLC pipeline
+  </p>
+  <p style="margin-top:2em; font-size:0.78rem; color:#484f58">
+    Repository:
+    <a href="https://github.com/samueltauil/copilot-config-workshop" style="color:#79c0ff">
+      github.com/samueltauil/copilot-config-workshop
+    </a>
+  </p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: true,
+    controls: true,
+    progress: true,
+    center: true,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    plugins: [ RevealHighlight, RevealNotes ]
+  });
+</script>
+</body>
+</html>
