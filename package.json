@@ -1,0 +1,8 @@
+{
+  "name": "task-manager-cli",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "In-memory Task Manager CLI for workshop",
+  "main": "src/index.js",
+  "license": "MIT"
+}
