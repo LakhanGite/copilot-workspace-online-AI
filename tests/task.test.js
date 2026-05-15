@@ -15,16 +15,14 @@ describe('Task model', () => {
     assert.ok(j.updatedAt);
   });
 
-  it('updates fields and refreshes updatedAt', (done) => {
+  it('updates fields and refreshes updatedAt', async () => {
     const t = new Task({ id: 'id-2', title: 'Orig' });
     const before = t.updatedAt;
-    setTimeout(() => {
-      t.update({ title: 'New', priority: 'high' });
-      assert.strictEqual(t.title, 'New');
-      assert.strictEqual(t.priority, 'high');
-      assert.notStrictEqual(t.updatedAt, before);
-      done();
-    }, 5);
+    await new Promise((r) => setTimeout(r, 5));
+    t.update({ title: 'New', priority: 'high' });
+    assert.strictEqual(t.title, 'New');
+    assert.strictEqual(t.priority, 'high');
+    assert.notStrictEqual(t.updatedAt, before);
   });
 
   it('throws on invalid title', () => {

@@ -1,9 +1,12 @@
 import * as service from './services/taskService.js';
 import { ValidationError } from './utils/validators.js';
+import { colorStatus, colorPriority } from './utils/colors.js';
 
 function printTasks(list) {
   for (const t of list) {
-    console.log(`- [${t.id}] ${t.title} (${t.status}, ${t.priority}) created:${t.createdAt}`);
+    const s = colorStatus(t.status);
+    const p = colorPriority(t.priority);
+    console.log(`- [${t.id}] ${t.title} (${s}, ${p}) created:${t.createdAt}`);
   }
 }
 
