@@ -3,3 +3,6 @@
 // Run this file with: node exercises/01-prompt-engineering/starter.js
 
 // --- Your generated functions will go below this line ---
+function hello(name) {
+  return `Hello, ${name}!`;
+}
